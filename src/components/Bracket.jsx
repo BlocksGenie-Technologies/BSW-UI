@@ -1,20 +1,62 @@
 import React, { useState } from 'react';
-import { Bracket } from 'react-tournament-bracket';
-import './App.css';
 
-function App() {
-  const handleOnClick = () => {
-    alert("ay");
-  }
 
-  return (
-    <section id="bracket">
+const Game = ({ teamA, teamB, onSelectionChange }) => {
+    const [selection, setSelection] = useState('');
+
+    const handleSelectionChange = (e) => {
+      const selectedTeam = e.target.value;
+      setSelection(selectedTeam);
+      onSelectionChange(selectedTeam);
+    };
+
+    return (
+      <div className="game">
+        <input type="text" value={teamA} readOnly />
+        <input type="text" value={teamB} readOnly />
+        <select value={selection} onChange={handleSelectionChange}>
+          <option value="">Select a winner</option>
+          <option value={teamA}>{teamA}</option>
+          <option value={teamB}>{teamB}</option>
+        </select>
+      </div>
+    );
+};
+
+const Round = ({ roundNumber, games, onSelectionChange }) => {
+    const handleSelectionChange = (gameIndex, selectedTeam) => {
+    onSelectionChange(roundNumber, gameIndex, selectedTeam);
+};
+
+return (
+    <div className="round">
+    <h2>Round {roundNumber}</h2>
+    {games.map((game, index) => (
+        <Game
+        key={index}
+        teamA={game.teamA}
+        teamB={game.teamB}
+        onSelectionChange={(selectedTeam) =>
+            handleSelectionChange(index, selectedTeam)
+        }
+        />
+    ))}
+    </div>
+);
+};
+const Bracket = ({ rounds, onSelectionChange }) => {
+    const handleSelectionChange = (roundNumber, gameIndex, selectedTeam) => {
+      onSelectionChange(roundNumber, gameIndex, selectedTeam);
+    };
+
+    return (
+        <section id="bracket">
         <div class="container">
         <div class="split split-one">
           <div class="round round-one current">
             <div class="round-details">Round 1<br/><span class="date">March 16</span></div>
             <ul class="matchup">
-              <li class="team team-top" onClick={handleOnClick()}>Duke<span class="score">76</span></li>
+              <li class="team team-top">Duke<span class="score">76</span></li>
               <li class="team team-bottom">Virginia<span class="score">82</span></li>
             </ul>
             <ul class="matchup">
@@ -178,7 +220,7 @@ function App() {
         </div>
         </div>
         </section>
-  );
-}
+    );
+};
 
-export default App;
+export default Bracket;
